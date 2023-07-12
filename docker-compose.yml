@@ -3,7 +3,7 @@ services:
   movies:
     build: reverse-proxy
     ports:
-      - 80:80
+      - 8080:80
     depends_on:
       - api
       - frontend
@@ -11,7 +11,7 @@ services:
   frontend:
     build: frontend
     ports:
-      - 80:80
+      - 8081:80
     volumes:
       - frontend:/src
     command: yarn start
@@ -23,7 +23,7 @@ services:
       - MONGODB_DATABASE=okteto
       - MONGODB_HOST=mongodb
     ports:
-      - 8080:8080
+      - 8082:80
     volumes:
       - api:/src
     command: yarn start
@@ -56,6 +56,11 @@ services:
       - 27017:27017
     volumes:
       - data:/bitnami/mongodb
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 volumes:
   data:
   frontend:
